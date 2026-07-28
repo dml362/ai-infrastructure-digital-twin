@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ai-infrastructure-digital-twin.local/common.schema.json",
+  "title": "Common Definitions",
+  "$defs": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 date-time with an explicit UTC offset, used for auditable repository timestamps."
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO 8601 full calendar date in YYYY-MM-DD form."
+    },
+    "source_id": {
+      "type": "string",
+      "pattern": "^SOURCE-[A-Z0-9]+-[0-9]{4}(?:-Q[1-4])?(?:-[0-9]{3})?$",
+      "description": "Human-readable immutable Source Document identifier following docs/SOURCE_REFERENCE.md."
+    },
+    "source_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/source_id"
+      },
+      "description": "Non-empty deduplicated Source Document IDs providing provenance for a record."
+    },
+    "confidence_score": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Evidence confidence from 1 (unverified/speculative) through 5 (verified SEC filing)."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "planned",
+        "active",
+        "inactive",
+        "completed",
+        "cancelled",
+        "superseded",
+        "unknown"
+      ],
+      "description": "Lifecycle state of the represented entity or repository record; unknown means evidence is insufficient."
+    },
+    "notes": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 10000,
+      "description": "Optional factual or methodological clarification; null means none is recorded."
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$",
+      "description": "ISO 4217 three-letter uppercase currency code for an adjacent monetary value."
+    },
+    "percentage": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Decimal fraction from 0 through 1, where 0.25 represents 25 percent."
+    },
+    "uuid": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Canonical RFC 4122 UUID string used as an immutable entity or relationship identifier."
+    }
+  }
+}

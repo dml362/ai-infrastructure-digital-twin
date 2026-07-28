@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ai-infrastructure-digital-twin.local/lease.schema.json",
+  "title": "Lease",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "schema_version",
+    "created_at",
+    "modified_at",
+    "source_ids",
+    "confidence_score",
+    "status",
+    "notes",
+    "company_id",
+    "customer_id",
+    "lease_type"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "common.schema.json#/$defs/uuid",
+      "description": "Immutable canonical UUID for this lease, capacity reservation, or customer contract."
+    },
+    "schema_version": {
+      "const": "0.1.0",
+      "description": "Version of the JSON Schema contract used to validate this record; it changes only through documented repository migrations."
+    },
+    "created_at": {
+      "$ref": "common.schema.json#/$defs/timestamp",
+      "description": "UTC date-time when this repository record was first created; this is audit metadata, not the real-world entity's founding or start date."
+    },
+    "modified_at": {
+      "$ref": "common.schema.json#/$defs/timestamp",
+      "description": "UTC date-time of the latest repository record change; it must be updated whenever a structured value or its provenance changes."
+    },
+    "source_ids": {
+      "$ref": "common.schema.json#/$defs/source_ids",
+      "description": "Non-empty set of Source Document IDs that directly support the observed, estimated, or derived values in this record."
+    },
+    "confidence_score": {
+      "$ref": "common.schema.json#/$defs/confidence_score",
+      "description": "Evidence-strength score from 1 (unverified or speculative) to 5 (verified SEC filing), assigned under ASSUMPTIONS.md."
+    },
+    "status": {
+      "$ref": "common.schema.json#/$defs/status",
+      "description": "Current lifecycle classification for the represented entity or record; unknown is used when available evidence does not establish a state."
+    },
+    "notes": {
+      "$ref": "common.schema.json#/$defs/notes",
+      "description": "Optional analyst clarification about scope, ambiguity, estimation, or lifecycle context; null means no clarification is recorded and notes never replace structured provenance."
+    },
+    "company_id": {
+      "$ref": "common.schema.json#/$defs/uuid",
+      "description": "UUID of the infrastructure Company acting as lessor or service provider; foreign key to Company.id."
+    },
+    "customer_id": {
+      "$ref": "common.schema.json#/$defs/uuid",
+      "description": "UUID of the contractual or disclosed Customer; foreign key to Customer.id."
+    },
+    "campus_id": {
+      "anyOf": [
+        {
+          "$ref": "common.schema.json#/$defs/uuid"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Optional UUID of the Campus serving the agreement; foreign key to Campus.id and null when not disclosed or not site-specific."
+    },
+    "project_id": {
+      "anyOf": [
+        {
+          "$ref": "common.schema.json#/$defs/uuid"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Optional UUID of the Project serving the agreement; foreign key to Project.id and null when not project-specific."
+    },
+    "lease_type": {
+      "type": "string",
+      "enum": [
+        "powered_shell",
+        "turnkey",
+        "colocation",
+        "capacity_reservation",
+        "other"
+      ],
+      "description": "Allowed commercial classification describing the principal form of capacity or facility commitment."
+    },
+    "contracted_capacity_mw": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "description": "Optional observed contracted power capacity in megawatts; null when the contract has no MW measure or it is undisclosed."
+    },
+    "start_date": {
+      "anyOf": [
+        {
+          "$ref": "common.schema.json#/$defs/date"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Optional observed or estimated ISO 8601 contractual commencement date; null when unknown or contingent."
+    },
+    "end_date": {
+      "anyOf": [
+        {
+          "$ref": "common.schema.json#/$defs/date"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Optional observed or derived ISO 8601 contractual expiration date excluding unexercised extensions; null when unknown."
+    },
+    "currency": {
+      "anyOf": [
+        {
+          "$ref": "common.schema.json#/$defs/currency"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Optional ISO 4217 currency for contract_value; null whenever contract_value is null."
+    },
+    "contract_value": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "description": "Optional observed or derived non-negative contract value in the adjacent currency; null when undisclosed, and notes or future fact metadata must distinguish nominal from real values."
+    }
+  }
+}
