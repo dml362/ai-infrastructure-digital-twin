@@ -1,69 +1,47 @@
 # Evidence Architecture
 
-Version 0.2.0 separates the Digital Twin into layers so that a downstream conclusion can always be traced back to immutable evidence.
+Version 0.2.0 separates Evidence, Facts, Derived Information, Analysis, and Conclusions so every downstream statement can be traced to immutable evidence.
 
-## The five layers
+## Layers and concepts
 
-### Evidence
+- **Evidence** is an external artifact. The Source Registry stores its identity, provenance, rights, archive locator, and integrity metadata. Evidence bytes are never edited.
+- **Fact** is one typed assertion about one field on one structural entity. It cites Evidence and is not embedded in the entity record.
+- **Observation** is the act of extracting an assertion. `observation_date` records when it was first found; `effective_date` records when it applied in the world.
+- **Estimate** is a Fact produced by documented inference. It retains `estimation_method` and `estimation_assumptions` in every review and lifecycle state.
+- **Derived Value** is a deterministic Fact calculated from `input_fact_ids` using a reproducible `derivation_method`. Inputs and method remain immutable even after dispute, deprecation, or supersession.
+- **Analysis** interprets Facts for a defined scenario in future versioned analytical code.
+- **Conclusion** is a judgment based on Analysis and must never be represented as Evidence or silently promoted to a Fact.
 
-Evidence is an external artifact: a filing, presentation, recording, photograph, research paper, or other source. The Source Registry stores metadata and integrity information about that artifact. Evidence bytes are immutable. If a publisher revises a document, register the revision as a new Source rather than replacing the old object.
+## Independent Fact dimensions
 
-### Fact
+The former combined `status` field has been replaced because production method, review judgment, and lifecycle are orthogonal:
 
-A Fact is one atomic assertion extracted from evidence about one field on one entity. Facts are not embedded in Company, Campus, or other entity records. A Fact records what value was observed, where it applies, when it was observed, when it became effective, its unit, its present confidence, and the Source IDs supporting it.
+| Field | Values | Meaning |
+| --- | --- | --- |
+| `value_classification` | `observed`, `estimated`, `derived` | Immutable description of how the value was produced |
+| `verification_status` | `pending_review`, `verified`, `disputed` | Current review judgment; may change administratively |
+| `lifecycle_status` | `active`, `superseded`, `deprecated` | Current administrative availability; history is never deleted |
 
-### Derived Information
+Valid combinations include observed/verified/active, estimated/pending_review/active, derived/verified/superseded, observed/disputed/active, and estimated/verified/deprecated. A disputed derived or estimated Fact keeps all original calculation or estimation metadata.
 
-Derived information is a deterministic calculation from one or more Facts. It is stored as a Fact with status `derived`, non-empty `input_fact_ids`, and a reproducible `derivation_method`. Derived information never cites an unexplained total and never replaces its input Facts.
+## Typed values and units
 
-### Analysis
+Every Fact declares exactly one `value_type`: `number`, `integer`, `text`, `boolean`, `date`, `date_time`, or `structured`. Conditional schema rules enforce the corresponding JSON representation. Dates and timestamps use Draft 2020-12 format validation; natural-language dates are invalid. Structured values are JSON objects, not arrays or encoded JSON strings. Null assertions are not permitted: absence of evidence means no Fact is created, with uncertainty explained in review notes or an estimate when appropriate.
 
-Analysis interprets Facts and derived information for a defined purpose or scenario. Analysis may compare alternatives, apply explicit assumptions, or identify uncertainty. It belongs in future versioned analytical code or outputs, not in Source or Fact records.
+Numeric values always declare a unit. Use `unitless` for counts and dimensionless ratios, `decimal_fraction` for ratios from 0 to 1, and `percent` for percentage points. Fixed physical and financial units should be explicit, such as `MW`, `MWh`, or `USD`. Non-numeric Facts use null units. A future field catalog may constrain permitted type/unit combinations for each `field_name`.
 
-### Conclusion
-
-A conclusion is a decision or judgment based on analysis. It must not be presented as evidence or silently promoted to a Fact. Future conclusion records should identify the analysis version and inputs that support them.
-
-## Related concepts
-
-An **observation** is the act of finding a value in evidence. `observation_date` records when this occurred; it is distinct from the real-world `effective_date`.
-
-An **estimate** is a Fact whose value is inferred because direct observation is unavailable. It uses status `estimated`, records `estimation_method`, and retains evidence and confidence like any other Fact.
-
-An **observed value** is the literal structured value asserted by a Fact. The name does not mean the value is verified; status and confidence communicate review quality.
-
-## Traceability chain
+## Traceability and storage boundaries
 
 ```text
-External evidence bytes
-        │ hash + external_file_id
-        ▼
-Source Registry record
-        │ source_ids
-        ▼
-Atomic Fact
-        │ input_fact_ids
-        ▼
-Derived information
-        │ versioned inputs and methods
-        ▼
-Analysis → Conclusion
+External evidence bytes -> Source Registry -> Atomic Fact -> Derived Fact -> Analysis -> Conclusion
 ```
 
-This chain answers: where a number originated, when it was first observed, what it applies to, whether it changed, what replaced it, and what confidence is assigned today.
+`source_url` is the original evidence location. `storage_location` and `external_file_id` identify an immutable object held by an external `storage_provider`. The repository JSONL record is only metadata describing those locations and integrity checks. When `storage_provider` is `none`, every archive-specific field is null. When a provider is declared, object identity, filename, media type, size, digest, algorithm, archive time, and archive access status are mandatory and internally consistent.
 
-## External archive boundary
+Google Drive is allowed but not required. Version 0.2.0 contains no authentication, upload, synchronization, file movement, or binary evidence.
 
-GitHub is the system of record for schemas, Source Registry metadata, Facts, validation, documentation, tests, and analytical logic. Large or binary evidence must not be committed.
+## Immutability
 
-- `source_url` is the original authoritative location from which evidence was obtained.
-- `storage_location` and `external_file_id` identify an immutable archived object held by `storage_provider`.
-- The Source Registry JSONL record is repository metadata describing and verifying those locations; it is not the document itself.
+After creation, a Fact's ID, schema version, creation timestamp, sources, subject, field, value type, asserted value, unit, observation/effective dates, classification, derivation inputs/method, and estimation method/assumptions are immutable. Permitted administrative updates are `verification_status`, `lifecycle_status`, `confidence_score`, review `notes`, reciprocal supersession references, and `modified_at`.
 
-Google Drive is the planned permanent archive and is an allowed provider. The contract remains provider-neutral so other controlled object stores can be introduced without changing the evidence model. Version 0.2.0 does not authenticate, upload, synchronize, or move Google Drive files.
-
-## Immutability and correction
-
-Source evidence is never edited in place. Facts are append-only historical assertions: `observed_value`, subject, field, and observation date are never overwritten to reflect a later disclosure. A correction creates a new Fact. The old Fact becomes `superseded`, its `superseded_by_fact_id` points to the new Fact, and the new Fact lists the old ID in `supersedes_fact_ids`.
-
-Metadata such as confidence, review notes, status, and `modified_at` may change through controlled review. Those lifecycle updates must not erase the original assertion or provenance.
+Changing an assertion creates a new Fact and reciprocal supersession links. The validator exposes a revision-integrity check for ingestion workflows, but the canonical repository validator cannot compare a record with an earlier Git revision automatically; enforcement across Git history remains a documented policy limitation.

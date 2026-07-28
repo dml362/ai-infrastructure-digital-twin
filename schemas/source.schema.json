@@ -11,7 +11,7 @@
     "source_type", "publication_date", "document_date", "authors", "publisher",
     "source_url", "storage_provider", "storage_location", "external_file_id",
     "original_filename", "media_type", "file_size_bytes", "cryptographic_hash",
-    "hash_algorithm", "archived_at", "access_status", "copyright_status",
+    "hash_algorithm", "archived_at", "archive_access_status", "copyright_status",
     "version", "language", "access_restrictions", "reliability_notes",
     "superseded_by_source_id", "supersedes_source_ids"
   ],
@@ -118,9 +118,9 @@
       "anyOf": [{"$ref": "common.schema.json#/$defs/timestamp"}, {"type": "null"}],
       "description": "UTC date-time when immutable bytes were placed in external storage; null when no archive exists."
     },
-    "access_status": {
-      "type": "string", "enum": ["public", "restricted", "private", "unavailable", "unknown"],
-      "description": "Current access classification for the evidence or external archive; it does not grant permissions."
+    "archive_access_status": {
+      "type": ["string", "null"], "enum": ["public", "restricted", "private", "unavailable", "unknown", null],
+      "description": "Current access classification of the externally archived object; null when storage_provider is none. It does not grant permissions."
     },
     "copyright_status": {
       "type": "string", "enum": ["public_domain", "licensed", "fair_use_metadata_only", "permission_required", "unknown"],
@@ -164,7 +164,21 @@
           "file_size_bytes": {"type": "integer"},
           "cryptographic_hash": {"type": "string"},
           "hash_algorithm": {"$ref": "common.schema.json#/$defs/hash_algorithm"},
-          "archived_at": {"$ref": "common.schema.json#/$defs/timestamp"}
+          "archived_at": {"$ref": "common.schema.json#/$defs/timestamp"},
+          "archive_access_status": {"type": "string"}
+        }
+      },
+      "else": {
+        "properties": {
+          "storage_location": {"type": "null"},
+          "external_file_id": {"type": "null"},
+          "original_filename": {"type": "null"},
+          "media_type": {"type": "null"},
+          "file_size_bytes": {"type": "null"},
+          "cryptographic_hash": {"type": "null"},
+          "hash_algorithm": {"type": "null"},
+          "archived_at": {"type": "null"},
+          "archive_access_status": {"type": "null"}
         }
       }
     },
@@ -184,6 +198,11 @@
     {
       "if": {"properties": {"hash_algorithm": {"const": "sha512"}}},
       "then": {"properties": {"cryptographic_hash": {"pattern": "^[a-f0-9]{128}$"}}}
+    },
+    {
+      "if": {"properties": {"status": {"const": "superseded"}}},
+      "then": {"properties": {"superseded_by_source_id": {"$ref": "common.schema.json#/$defs/source_id"}}},
+      "else": {"properties": {"superseded_by_source_id": {"type": "null"}}}
     }
   ]
 }

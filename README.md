@@ -4,7 +4,7 @@ Version 0.2.0 adds the permanent evidence layer for a long-lived, multi-company 
 
 ## Design principles
 
-- **Traceable:** every record cites one or more source-document IDs.
+- **Traceable:** every asserted Fact cites one or more Source Registry IDs.
 - **Normalized:** entities are stored once and connected with stable IDs.
 - **Reproducible:** derived values identify their inputs and calculation method.
 - **Time-aware:** facts retain effective dates and source publication dates.
@@ -29,9 +29,13 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for entity relationships, [docs
 
 ## Data philosophy
 
-Canonical Facts are atomic objects outside typed entity records; entity tables do not embed asserted values. Relationships use IDs rather than copied records. Each Fact has observation and effective dates, lifecycle status, confidence, notes, and Source references. A Source establishes provenance, while confidence expresses evidentiary strength; neither substitutes for the other.
+Canonical Facts are atomic objects outside typed entity records; entity tables do not embed asserted values. Entity records contain only UUID identity, a machine key, a non-authoritative display label, structural graph edges, and repository-administration metadata. Legal names, locations, capacity, power, dates, operating state, customer relationships, lease terms, financial values, ownership, and all other sourced attributes exist exclusively as Facts.
+
+Every Fact separates `value_classification` (observed, estimated, derived), `verification_status` (pending review, verified, disputed), and `lifecycle_status` (active, superseded, deprecated). Its `value_type` selects one exact representation for the value. A Source establishes provenance, while confidence expresses evidentiary strength; neither substitutes for the other.
 
 Raw source documents must not be modified after registration and binary evidence must not be committed to GitHub. Corrections create new Source and Fact records with reciprocal supersession links. Derived values reference input Fact IDs and document their reproducible formula or transformation.
+
+`display_name` is only a navigation label. It must never be treated as a legal name or copied into analysis as an authoritative value. See [docs/SCHEMA_EXAMPLES.md](docs/SCHEMA_EXAMPLES.md) for synthetic structural and Fact examples.
 
 ## Versioning philosophy
 

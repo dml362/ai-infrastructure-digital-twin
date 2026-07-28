@@ -70,19 +70,30 @@
       "format": "uuid",
       "description": "Canonical RFC 4122 UUID string used as an immutable entity or relationship identifier."
     },
-    "fact_status": {
+    "fact_value_classification": {
       "type": "string",
-      "enum": [
-        "observed",
-        "verified",
-        "estimated",
-        "derived",
-        "disputed",
-        "deprecated",
-        "superseded",
-        "pending_review"
-      ],
-      "description": "Controlled Fact lifecycle status defined in docs/EVIDENCE_ARCHITECTURE.md."
+      "enum": ["observed", "estimated", "derived"],
+      "description": "How a Fact value was produced; this classification is immutable after creation."
+    },
+    "fact_verification_status": {
+      "type": "string",
+      "enum": ["pending_review", "verified", "disputed"],
+      "description": "Current review conclusion for a Fact, independent of production method and lifecycle."
+    },
+    "fact_lifecycle_status": {
+      "type": "string",
+      "enum": ["active", "superseded", "deprecated"],
+      "description": "Administrative lifecycle of a Fact; historical Facts remain stored in every state."
+    },
+    "fact_value_type": {
+      "type": "string",
+      "enum": ["number", "integer", "text", "boolean", "date", "date_time", "structured"],
+      "description": "Discriminator selecting the exact JSON representation and format of observed_value."
+    },
+    "entity_record_status": {
+      "type": "string",
+      "enum": ["active", "deprecated"],
+      "description": "Repository-management state of a structural entity record, not the operating status of the real-world subject."
     },
     "source_type": {
       "type": "string",

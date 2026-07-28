@@ -9,8 +9,8 @@ All notable changes are documented here. This project follows [Semantic Versioni
 ### Added
 
 - Canonical Source Registry supporting 18 evidence types and provider-neutral external archive metadata, including Google Drive object identifiers and integrity fields.
-- Atomic Fact schema with typed entity links, observation/effective dates, confidence, provenance, estimation, derivation, and historical supersession.
-- Controlled Fact status vocabulary and documented Source-to-Fact ingestion lifecycle.
+- Atomic Fact schema with an explicit value-type discriminator, typed entity links, observation/effective dates, confidence, provenance, estimation, derivation, and historical supersession.
+- Independent controlled vocabularies for Fact value classification, verification status, and lifecycle status.
 - Repository-wide validation for duplicate identifiers, broken provenance and entity links, quantitative units, reciprocal supersession, and circular supersession or derivation graphs.
 - Positive and negative evidence architecture tests.
 
@@ -18,6 +18,9 @@ All notable changes are documented here. This project follows [Semantic Versioni
 
 - Replaced the preliminary Source Document contract with the Version 0.2.0 Source Registry contract; no canonical data migration is required because the repository contains no records.
 - Expanded the data dictionary and architecture documentation to separate evidence, Facts, derived information, analysis, and conclusions.
+- Restricted entity schemas to structural identity, graph edges, non-authoritative display labels, and repository administration; sourced attributes exist exclusively as Facts.
+- Replaced the former combined Fact status model and documented its conceptual mapping; no migration tool is needed because no production records exist.
+- Tightened external archive and Source supersession consistency and added immutable Fact revision checks.
 
 ## [0.1.0] - 2026-07-28
 

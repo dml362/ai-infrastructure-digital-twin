@@ -33,6 +33,24 @@ RELATIONSHIP_TARGETS = {
     "parent_customer_id": "customer",
     "dependency_milestone_ids": "construction_milestone",
 }
+IMMUTABLE_FACT_FIELDS = {
+    "id", "schema_version", "created_at", "source_ids", "value_classification",
+    "entity_type", "entity_id", "field_name", "value_type", "observed_value",
+    "unit", "observation_date", "effective_date", "input_fact_ids",
+    "derivation_method", "estimation_method", "estimation_assumptions",
+}
+
+
+def validate_fact_revision(previous: dict[str, Any], revised: dict[str, Any]) -> list[str]:
+    """Reject in-place mutation of immutable Fact assertion and production fields."""
+    errors = []
+    for field in sorted(IMMUTABLE_FACT_FIELDS):
+        if previous.get(field) != revised.get(field):
+            errors.append(
+                f"Fact '{previous.get('id')}' immutable field '{field}' changed; "
+                "create a replacement Fact and use reciprocal supersession"
+            )
+    return errors
 
 
 def load_schemas(root: Path) -> tuple[dict[str, Any], Any, Any]:
