@@ -21,7 +21,7 @@ Each field definition must include:
 
 Every entity contains:
 
-- `id`: globally unique, immutable entity identifier using the entity prefix convention.
+- `id`: globally unique, immutable RFC 4122 UUID for canonical entities. Source Documents intentionally use the human-readable source-reference convention.
 - `created_at`: UTC timestamp when the record was first created.
 - `modified_at`: UTC timestamp of the most recent change; never earlier than `created_at`.
 - `source_ids`: non-empty, deduplicated list of `Source Document.id` references.
@@ -31,7 +31,7 @@ Every entity contains:
 
 ## Naming and units
 
-Use singular entity names and plural arrays. IDs end in `_id` or `_ids`. Dates end in `_date`; timestamps end in `_at`. Fixed-unit numeric fields include their unit (`capacity_mw`, `amount_usd`). When currencies may vary, store `amount` and an adjacent ISO 4217 `currency` field.
+Use singular entity names and plural arrays. Foreign-key IDs end in `_id` or `_ids` and use the shared UUID contract. Dates end in `_date`; timestamps end in `_at`. Fixed-unit numeric fields include their unit (`capacity_mw`, `amount_usd`). When currencies may vary, store `amount` and an adjacent ISO 4217 `currency` field.
 
 Percentages are decimal fractions (`0.25` means 25%). Energy is in MWh and power is in MW unless a field states otherwise. Monetary values must state whether they are nominal or real and identify the as-of date when material.
 

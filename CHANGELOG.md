@@ -14,5 +14,5 @@ All notable changes are documented here. This project follows [Semantic Versioni
 - Data dictionary, assumptions policy, source-reference convention, and architecture documentation.
 - Repository and fixture validation scripts with automated tests.
 
-[Unreleased]: https://github.com/OWNER/REPOSITORY/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/OWNER/REPOSITORY/releases/tag/v0.1.0
+[Unreleased]: https://github.com/dml362/ai-infrastructure-digital-twin/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/dml362/ai-infrastructure-digital-twin/releases/tag/v0.1.0
