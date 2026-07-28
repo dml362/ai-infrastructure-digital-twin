@@ -1,6 +1,6 @@
 # Source Reference System
 
-Every canonical entity must include at least one `source_ids` entry resolving to a Source Document record.
+Every canonical Fact must include at least one `source_ids` entry resolving to a Source Registry record. Other canonical entity metadata also retains source references where required by its schema.
 
 ## Format
 
@@ -16,14 +16,14 @@ SOURCE-{TYPE}-{PERIOD}-{SEQUENCE}
 
 Examples: `SOURCE-SEC-2026-001`, `SOURCE-EARNINGS-2026-Q2`, `SOURCE-BLOOMBERG-2026-015`.
 
-The source ID identifies the document, not a claim within it. Use `locator` for page, section, exhibit, timestamp, table, or paragraph. When a single record relies on different passages, create structured fact-level attribution in the future facts layer rather than inventing duplicate source documents.
+The Source ID identifies the evidence artifact, not a claim within it. Atomic claims are separate Fact records. A future fact-level evidence locator may identify the page, section, exhibit, timestamp, table, image region, or paragraph supporting an assertion without inventing duplicate Source records.
 
 ## Registration workflow
 
-1. Register document metadata and a canonical URL or archive path.
-2. Record publisher, publication date, retrieval timestamp, document type, and content hash when a local copy is permitted.
+1. Register source metadata and the original authoritative `source_url`.
+2. When permitted, archive immutable bytes externally and record provider, storage location, provider file ID, original filename, media type, size, archive timestamp, and cryptographic digest.
 3. Assign the evidence confidence level; downstream records may use a lower score if the claim is ambiguous.
 4. Cite its ID from every entity supported by the document.
 5. Never silently replace archived content; register a revision as a new source and link it in notes.
 
-URLs are locators, not durable proof. Preserve permitted documents under a content-addressed archive or external document store and record a SHA-256 hash.
+URLs are locators, not durable proof. Google Drive is the planned permanent archive, but the schema permits other external providers. GitHub stores only the metadata record and never the binary evidence. Direct archive integration is outside Version 0.2.0.

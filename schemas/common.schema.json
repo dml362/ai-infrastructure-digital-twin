@@ -16,7 +16,7 @@
     "source_id": {
       "type": "string",
       "pattern": "^SOURCE-[A-Z0-9]+-[0-9]{4}(?:-Q[1-4])?(?:-[0-9]{3})?$",
-      "description": "Human-readable immutable Source Document identifier following docs/SOURCE_REFERENCE.md."
+      "description": "Human-readable immutable Source Registry identifier following docs/SOURCE_REFERENCE.md."
     },
     "source_ids": {
       "type": "array",
@@ -25,7 +25,7 @@
       "items": {
         "$ref": "#/$defs/source_id"
       },
-      "description": "Non-empty deduplicated Source Document IDs providing provenance for a record."
+      "description": "Non-empty deduplicated Source Registry IDs providing provenance for a record."
     },
     "confidence_score": {
       "type": "integer",
@@ -69,6 +69,77 @@
       "type": "string",
       "format": "uuid",
       "description": "Canonical RFC 4122 UUID string used as an immutable entity or relationship identifier."
+    },
+    "fact_status": {
+      "type": "string",
+      "enum": [
+        "observed",
+        "verified",
+        "estimated",
+        "derived",
+        "disputed",
+        "deprecated",
+        "superseded",
+        "pending_review"
+      ],
+      "description": "Controlled Fact lifecycle status defined in docs/EVIDENCE_ARCHITECTURE.md."
+    },
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "sec_filing",
+        "investor_presentation",
+        "earnings_call",
+        "conference_presentation",
+        "press_release",
+        "management_interview",
+        "government_filing",
+        "permit",
+        "utility_documentation",
+        "satellite_image",
+        "construction_photograph",
+        "industry_research",
+        "academic_paper",
+        "news_article",
+        "podcast",
+        "video",
+        "internal_research_note",
+        "unknown"
+      ],
+      "description": "Controlled evidence-medium classification for a Source Registry record."
+    },
+    "entity_type": {
+      "type": "string",
+      "enum": [
+        "company",
+        "campus",
+        "project",
+        "lease",
+        "power_asset",
+        "customer",
+        "financing",
+        "construction_milestone",
+        "market_assumption"
+      ],
+      "description": "Canonical entity collection to which a Fact applies."
+    },
+    "storage_provider": {
+      "type": "string",
+      "enum": [
+        "google_drive",
+        "amazon_s3",
+        "azure_blob",
+        "sharepoint",
+        "box",
+        "other_external",
+        "none"
+      ],
+      "description": "Provider holding immutable source bytes outside GitHub; none means no archived copy exists."
+    },
+    "hash_algorithm": {
+      "type": "string",
+      "enum": ["sha256", "sha384", "sha512"],
+      "description": "Cryptographic algorithm used to verify externally archived source bytes."
     }
   }
 }

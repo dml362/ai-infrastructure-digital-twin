@@ -36,7 +36,7 @@
     },
     "source_ids": {
       "$ref": "common.schema.json#/$defs/source_ids",
-      "description": "Non-empty set of Source Document IDs that directly support the observed, estimated, or derived values in this record."
+      "description": "Non-empty set of Source Registry IDs that directly support the observed, estimated, or derived values in this record."
     },
     "confidence_score": {
       "$ref": "common.schema.json#/$defs/confidence_score",

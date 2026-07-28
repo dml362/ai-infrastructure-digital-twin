@@ -8,3 +8,5 @@ outputs/*
 !outputs/.gitkeep
 data/staging/*
 !data/staging/.gitkeep
+# Evidence binaries belong in approved external storage, never GitHub.
+sources/archive/

@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ai-infrastructure-digital-twin.local/fact.schema.json",
+  "title": "Canonical Fact",
+  "description": "One atomic, time-aware assertion about one field on one canonical entity, with explicit evidence and history links.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "schema_version", "created_at", "modified_at", "source_ids",
+    "confidence_score", "status", "notes", "entity_type", "entity_id",
+    "field_name", "observed_value", "unit", "observation_date", "effective_date",
+    "superseded_by_fact_id", "supersedes_fact_ids", "input_fact_ids",
+    "derivation_method", "estimation_method"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "common.schema.json#/$defs/uuid",
+      "description": "Permanent UUID for this individual assertion; Fact IDs are never reused or reassigned."
+    },
+    "schema_version": {
+      "const": "0.2.0",
+      "description": "Version of the Fact contract used to validate this record."
+    },
+    "created_at": {
+      "$ref": "common.schema.json#/$defs/timestamp",
+      "description": "UTC date-time when this immutable historical Fact record was first created."
+    },
+    "modified_at": {
+      "$ref": "common.schema.json#/$defs/timestamp",
+      "description": "UTC date-time of the latest metadata or lifecycle update; observed_value itself is never overwritten."
+    },
+    "source_ids": {
+      "$ref": "common.schema.json#/$defs/source_ids",
+      "description": "One or more Source IDs providing direct provenance; an empty or unresolved set is invalid."
+    },
+    "confidence_score": {
+      "$ref": "common.schema.json#/$defs/confidence_score",
+      "description": "Current evidence-strength assessment from 1 through 5; later review may change confidence without erasing history."
+    },
+    "status": {
+      "$ref": "common.schema.json#/$defs/fact_status",
+      "description": "Controlled observation and review lifecycle state; transitions are governed by docs/FACT_LIFECYCLE.md."
+    },
+    "notes": {
+      "$ref": "common.schema.json#/$defs/notes",
+      "description": "Optional clarification of scope, ambiguity, disagreement, or review reasoning; never a substitute for structured provenance."
+    },
+    "entity_type": {
+      "$ref": "common.schema.json#/$defs/entity_type",
+      "description": "Canonical entity collection containing the subject of this assertion."
+    },
+    "entity_id": {
+      "$ref": "common.schema.json#/$defs/uuid",
+      "description": "UUID of the subject record in the collection named by entity_type; validated as a typed foreign key."
+    },
+    "field_name": {
+      "type": "string", "pattern": "^[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)*$",
+      "description": "Stable snake_case field path being asserted, such as planned_capacity_mw; it identifies meaning without embedding the Fact in the entity."
+    },
+    "observed_value": {
+      "type": ["string", "number", "integer", "boolean", "object", "array"],
+      "description": "Atomic observed, estimated, or derived value. Interpretation is governed by field_name, unit, status, dates, and provenance."
+    },
+    "unit": {
+      "type": ["string", "null"], "minLength": 1,
+      "description": "Explicit measurement unit for quantitative values, such as MW, years, USD, or decimal_fraction; null only for inherently unitless values."
+    },
+    "observation_date": {
+      "$ref": "common.schema.json#/$defs/date",
+      "description": "Date this value was first observed in the cited evidence, answering when the repository first knew the assertion."
+    },
+    "effective_date": {
+      "anyOf": [{"$ref": "common.schema.json#/$defs/date"}, {"type": "null"}],
+      "description": "Date the assertion became true in the real world; null when evidence does not establish an effective date."
+    },
+    "superseded_by_fact_id": {
+      "anyOf": [{"$ref": "common.schema.json#/$defs/uuid"}, {"type": "null"}],
+      "description": "Fact ID that directly replaces this assertion; null unless status is superseded."
+    },
+    "supersedes_fact_ids": {
+      "type": "array", "uniqueItems": true,
+      "items": {"$ref": "common.schema.json#/$defs/uuid"},
+      "description": "Fact IDs directly replaced by this assertion; old Facts remain permanently stored and queryable."
+    },
+    "input_fact_ids": {
+      "type": "array", "uniqueItems": true,
+      "items": {"$ref": "common.schema.json#/$defs/uuid"},
+      "description": "Fact IDs used as reproducible calculation inputs; required and non-empty when status is derived."
+    },
+    "derivation_method": {
+      "type": ["string", "null"],
+      "description": "Reproducible formula or versioned transformation reference for a derived Fact; null for non-derived Facts."
+    },
+    "estimation_method": {
+      "type": ["string", "null"],
+      "description": "Method and assumptions used for an estimated Fact; null for non-estimated Facts."
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"observed_value": {"type": ["number", "integer"]}}},
+      "then": {"properties": {"unit": {"type": "string", "minLength": 1}}}
+    },
+    {
+      "if": {"properties": {"status": {"const": "derived"}}},
+      "then": {
+        "properties": {
+          "input_fact_ids": {"minItems": 1},
+          "derivation_method": {"type": "string", "minLength": 1}
+        }
+      },
+      "else": {
+        "properties": {
+          "derivation_method": {"type": "null"}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"status": {"const": "estimated"}}},
+      "then": {"properties": {"estimation_method": {"type": "string", "minLength": 1}}},
+      "else": {"properties": {"estimation_method": {"type": "null"}}}
+    },
+    {
+      "if": {"properties": {"status": {"const": "superseded"}}},
+      "then": {"properties": {"superseded_by_fact_id": {"$ref": "common.schema.json#/$defs/uuid"}}},
+      "else": {"properties": {"superseded_by_fact_id": {"type": "null"}}}
+    }
+  ]
+}
