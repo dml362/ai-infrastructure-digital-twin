@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+.env
+Thumbs.db
+outputs/*
+!outputs/.gitkeep
+data/staging/*
+!data/staging/.gitkeep
