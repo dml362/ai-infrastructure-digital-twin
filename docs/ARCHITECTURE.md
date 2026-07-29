@@ -2,7 +2,9 @@
 
 ## Logical model
 
-`Company` is the tenant-neutral root of the structural graph. Containment, financing-scope, and milestone-dependency IDs define topology only; they do not assert ownership percentages, customer relationships, counterparties, commercial terms, dates, capacities, or operating conditions. Source Registry records identify immutable evidence. Facts link evidence to individual fields on canonical entities without embedding assertions in those entity records.
+`Company` is the tenant-neutral root of the structural graph. Source Registry records identify immutable evidence. Field Registry records define governed semantics. Facts connect one Source-backed assertion and one immutable Field ID to one structural entity without embedding assertions in entity records.
+
+The four validation layers are distinct: structural validity checks JSON contracts and canonical layout; semantic validity resolves Field rules; provenance validity resolves Sources; lifecycle validity enforces history, derivation, cardinality, and supersession.
 
 Relationships are foreign-key IDs. Records must not embed another canonical entity, preventing duplicated customer, campus, or source attributes.
 
@@ -33,6 +35,8 @@ data/staging/
 - IDs are globally unique and immutable.
 - All foreign keys resolve to the declared entity type.
 - All Fact `source_ids` resolve to registered Sources; structural entity records do not carry provenance because they contain no assertions.
+- Every Fact `field_id` resolves to exactly one governed Field definition.
+- Fact entity type, value type, units, classification, verification state, cardinality, and deprecation use comply with that Field.
 - Fact subject links resolve to the entity collection declared by `entity_type`.
 - Supersession links are reciprocal and acyclic; derived Facts resolve all input Fact IDs.
 - Fact assertion and production fields are immutable; only documented administrative fields may change in place.
@@ -42,4 +46,4 @@ data/staging/
 
 ## Scale path
 
-JSON Schema remains the stable contract while storage can evolve from versioned JSONL to a relational database or analytical warehouse. Loaders should preserve IDs, timestamps, source links, and schema versions. Index `id`, foreign keys, the three Fact state fields, effective dates, and Source IDs in database implementations.
+JSON Schema remains the stable structural contract while deterministic repository validation enforces cross-record semantics. Storage may evolve while preserving Entity, Source, Field, and Fact IDs. Index `field_id`, subject keys, state fields, effective dates, and Source IDs.
