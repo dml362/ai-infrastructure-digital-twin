@@ -1,12 +1,13 @@
 # AI Infrastructure Digital Twin
 
-Version 0.2.0 adds the permanent evidence layer for a long-lived, multi-company digital representation of AI infrastructure. The repository is an engineering database: immutable external evidence is registered, atomic Facts cite that evidence, and derived information identifies its input Facts. Valuation models and company data remain outside this release.
+Version 0.3.0 adds semantic governance to the permanent evidence layer. Immutable external evidence is registered, atomic Facts cite evidence and governed Fields, and derived information identifies its input Facts. A Fact is valid only when its structure, semantics, provenance, and lifecycle all validate. Valuation models and company data remain outside this release.
 
 ## Design principles
 
 - **Traceable:** every asserted Fact cites one or more Source Registry IDs.
 - **Normalized:** entities are stored once and connected with stable IDs.
 - **Reproducible:** derived values identify their inputs and calculation method.
+- **Semantically governed:** every Fact resolves an immutable Field ID that governs meaning, type, units, applicability, and cardinality.
 - **Time-aware:** facts retain effective dates and source publication dates.
 - **Scalable:** newline-delimited JSON can be partitioned by entity, company, and year without changing schemas.
 - **Conservative:** unknown values remain `null` or absent; they are never silently replaced with zero.
@@ -16,7 +17,7 @@ Version 0.2.0 adds the permanent evidence layer for a long-lived, multi-company 
 | Path | Purpose |
 | --- | --- |
 | `docs/` | Architecture decisions, conventions, and operating guidance |
-| `data/` | Validated canonical records; intentionally empty in v0.2.0 |
+| `data/` | Validated canonical records; v0.3.0 contains only the synthetic Field Registry |
 | `schemas/` | JSON Schema contracts and reusable definitions |
 | `sources/` | Source registry and future immutable source manifests |
 | `models/` | Future reproducible transformations; not valuation models |
@@ -25,13 +26,15 @@ Version 0.2.0 adds the permanent evidence layer for a long-lived, multi-company 
 | `outputs/` | Generated, disposable artifacts; canonical data never lives here |
 | `archive/` | Superseded material retained for audit history |
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for entity relationships, [docs/EVIDENCE_ARCHITECTURE.md](docs/EVIDENCE_ARCHITECTURE.md) for the evidence-to-conclusion layers, [docs/FACT_LIFECYCLE.md](docs/FACT_LIFECYCLE.md) for controlled transitions, and [docs/SOURCE_REFERENCE.md](docs/SOURCE_REFERENCE.md) for provenance rules.
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for relationships, [docs/FIELD_REGISTRY.md](docs/FIELD_REGISTRY.md) for semantic governance, [docs/EVIDENCE_ARCHITECTURE.md](docs/EVIDENCE_ARCHITECTURE.md) for evidence layers, [docs/FACT_LIFECYCLE.md](docs/FACT_LIFECYCLE.md) for transitions, and [docs/SOURCE_REFERENCE.md](docs/SOURCE_REFERENCE.md) for provenance.
 
 ## Data philosophy
 
 Canonical Facts are atomic objects outside typed entity records; entity tables do not embed asserted values. Entity records contain only UUID identity, a machine key, a non-authoritative display label, structural graph edges, and repository-administration metadata. Legal names, locations, capacity, power, dates, operating state, customer relationships, lease terms, financial values, ownership, and all other sourced attributes exist exclusively as Facts.
 
-Every Fact separates `value_classification` (observed, estimated, derived), `verification_status` (pending review, verified, disputed), and `lifecycle_status` (active, superseded, deprecated). Its `value_type` selects one exact representation for the value. A Source establishes provenance, while confidence expresses evidentiary strength; neither substitutes for the other.
+Every Fact stores an immutable `field_id`, never a free-form field-name string. The Field Registry governs the canonical name, display label, applicable entity types, value type, units, production/review permissions, cardinality, and lifecycle policy. Renaming Field metadata never changes historical Facts.
+
+Every Fact also separates `value_classification` (observed, estimated, derived), `verification_status` (pending review, verified, disputed), and `lifecycle_status` (active, superseded, deprecated). A Source establishes provenance, while a Field establishes meaning; neither substitutes for the other.
 
 Raw source documents must not be modified after registration and binary evidence must not be committed to GitHub. Corrections create new Source and Fact records with reciprocal supersession links. Derived values reference input Fact IDs and document their reproducible formula or transformation.
 

@@ -7,7 +7,7 @@ Source arrives -> Registered -> Reviewed -> Facts extracted -> Validated
                -> Fact created -> Linked to entity -> Available downstream
 ```
 
-Registration assigns a permanent Source ID and records the original URL separately from any external archive. Review confirms source type, reliability, copyright, access conditions, and—when bytes are archived—the provider object ID, filename, size, media type, timestamp, access state, and cryptographic digest.
+Registration assigns a permanent Source ID. Fact creation also selects a governed Field ID; semantic validation must pass before the Fact is available downstream.
 
 ## Fact state transitions
 
@@ -53,3 +53,5 @@ A legacy lifecycle or review label cannot determine how a value was produced. If
 ## Validation guarantees and limitation
 
 Validation rejects unknown state values, contradictory production metadata, missing numeric units, broken provenance, duplicate IDs, broken typed entity links, non-reciprocal supersession, and circular Fact, Source, or derivation chains. The revision-integrity helper rejects changes to immutable fields when supplied prior and revised records. Standard repository validation sees only the current checkout and therefore cannot independently compare all historical Git versions.
+
+Field lifecycle is independent from Fact lifecycle. Deprecating a Field prevents new active Facts but does not invalidate historical deprecated or superseded Facts. A deprecated Field points to a replacement Field; Facts are never rewritten to the replacement ID.

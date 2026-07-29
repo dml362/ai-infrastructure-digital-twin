@@ -4,6 +4,21 @@ All notable changes are documented here. This project follows [Semantic Versioni
 
 ## [Unreleased]
 
+## [0.3.0] - Unreleased
+
+### Added
+
+- First-class Field Registry with permanent `FIELD-NNNNNN` identifiers and governed canonical names.
+- Synthetic definitions covering all Fact value types, units, shared applicability, relationships, calculations, history, and deprecation.
+- Deterministic semantic validation for entity applicability, value type, units, classification, verification, cardinality, active-Fact multiplicity, and Field replacement graphs.
+- Field governance, naming, category, lifecycle, and deprecation documentation.
+
+### Changed
+
+- Facts now reference immutable `field_id` values instead of free-form field-name strings.
+- Validation now distinguishes structural, semantic, provenance, and lifecycle validity.
+- Expanded tests for Field identity, naming, references, semantic constraints, cardinality, deprecation, replacement integrity, and rename stability.
+
 ## [0.2.0] - Unreleased
 
 ### Added
@@ -33,5 +48,6 @@ All notable changes are documented here. This project follows [Semantic Versioni
 - Repository and fixture validation scripts with automated tests.
 
 [Unreleased]: https://github.com/dml362/ai-infrastructure-digital-twin/compare/v0.2.0...HEAD
+[0.3.0]: https://github.com/dml362/ai-infrastructure-digital-twin/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/dml362/ai-infrastructure-digital-twin/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/dml362/ai-infrastructure-digital-twin/releases/tag/v0.1.0

@@ -18,6 +18,11 @@
       "pattern": "^SOURCE-[A-Z0-9]+-[0-9]{4}(?:-Q[1-4])?(?:-[0-9]{3})?$",
       "description": "Human-readable immutable Source Registry identifier following docs/SOURCE_REFERENCE.md."
     },
+    "field_id": {
+      "type": "string",
+      "pattern": "^FIELD-[0-9]{6}$",
+      "description": "Permanent immutable Field Registry identifier; it never changes when canonical or display names evolve."
+    },
     "source_ids": {
       "type": "array",
       "minItems": 1,
@@ -89,6 +94,11 @@
       "type": "string",
       "enum": ["number", "integer", "text", "boolean", "date", "date_time", "structured"],
       "description": "Discriminator selecting the exact JSON representation and format of observed_value."
+    },
+    "semantic_category": {
+      "type": "string",
+      "enum": ["identity", "operational", "relationship", "calculated", "historical", "temporal", "append_only", "single_active", "multiple_active"],
+      "description": "Controlled semantic behavior or subject-matter category assigned to a governed Field."
     },
     "entity_record_status": {
       "type": "string",

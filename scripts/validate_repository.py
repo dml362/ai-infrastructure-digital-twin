@@ -23,6 +23,7 @@ ENTITY_SCHEMAS = {
     "construction_milestone": "construction_milestone.schema.json",
     "source": "source.schema.json",
     "fact": "fact.schema.json",
+    "field": "field.schema.json",
     "market_assumption": "market_assumption.schema.json",
 }
 RELATIONSHIP_TARGETS = {
@@ -35,7 +36,7 @@ RELATIONSHIP_TARGETS = {
 }
 IMMUTABLE_FACT_FIELDS = {
     "id", "schema_version", "created_at", "source_ids", "value_classification",
-    "entity_type", "entity_id", "field_name", "value_type", "observed_value",
+    "entity_type", "entity_id", "field_id", "value_type", "observed_value",
     "unit", "observation_date", "effective_date", "input_fact_ids",
     "derivation_method", "estimation_method", "estimation_assumptions",
 }
@@ -211,10 +212,10 @@ def _validate_relationships(
                         f"{location}: supersession is not reciprocal; Fact '{replacement_id}' "
                         f"must list '{fact_id}' in supersedes_fact_ids"
                     )
-                subject = (fact.get("entity_type"), fact.get("entity_id"), fact.get("field_name"))
+                subject = (fact.get("entity_type"), fact.get("entity_id"), fact.get("field_id"))
                 replacement_subject = (
                     replacement_fact.get("entity_type"), replacement_fact.get("entity_id"),
-                    replacement_fact.get("field_name"),
+                    replacement_fact.get("field_id"),
                 )
                 if subject != replacement_subject:
                     errors.append(
@@ -237,6 +238,91 @@ def _validate_relationships(
 
     errors.extend(_detect_cycles(fact_supersession, "Fact supersession"))
     errors.extend(_detect_cycles(derivation_graph, "Fact derivation"))
+
+    field_index = indexes.get("field", {})
+    field_replacement: dict[str, set[str]] = defaultdict(set)
+    canonical_names: dict[str, str] = {}
+    for field_id, (field, path, line_number) in field_index.items():
+        location = _record_location(path, line_number)
+        canonical_name = field.get("canonical_name")
+        if isinstance(canonical_name, str):
+            if canonical_name in canonical_names:
+                errors.append(
+                    f"{location}: duplicate Field canonical_name '{canonical_name}'; "
+                    f"first assigned to '{canonical_names[canonical_name]}'"
+                )
+            else:
+                canonical_names[canonical_name] = field_id
+        replacement_id = field.get("replacement_field_id")
+        if replacement_id is not None:
+            field_replacement[field_id].add(replacement_id)
+            if replacement_id == field_id:
+                errors.append(f"{location}: Field '{field_id}' cannot replace itself")
+            elif replacement_id not in field_index:
+                errors.append(f"{location}: broken replacement Field reference '{replacement_id}'")
+        units = set(field.get("allowed_units", []))
+        policy = field.get("unitless_policy")
+        if policy == "required" and units != {"unitless"}:
+            errors.append(f"{location}: unitless_policy required permits only the unitless unit")
+        if policy == "allowed" and "unitless" not in units:
+            errors.append(f"{location}: unitless_policy allowed requires unitless in allowed_units")
+        if policy == "prohibited" and "unitless" in units:
+            errors.append(f"{location}: unitless_policy prohibited cannot list unitless")
+    errors.extend(_detect_cycles(field_replacement, "Field replacement"))
+
+    active_facts: dict[tuple[str, str, str], list[str]] = defaultdict(list)
+    for fact_id, (fact, path, line_number) in fact_index.items():
+        location = _record_location(path, line_number)
+        field_id = fact.get("field_id")
+        registered = field_index.get(field_id)
+        if registered is None:
+            errors.append(f"{location}: unknown Field reference '{field_id}'")
+            continue
+        field = registered[0]
+        if fact.get("entity_type") not in field.get("applicable_entity_types", []):
+            errors.append(
+                f"{location}: Field '{field_id}' does not apply to entity type "
+                f"'{fact.get('entity_type')}'"
+            )
+        if fact.get("value_type") != field.get("value_type"):
+            errors.append(
+                f"{location}: Field '{field_id}' requires value_type "
+                f"'{field.get('value_type')}', not '{fact.get('value_type')}'"
+            )
+        if fact.get("value_type") in {"number", "integer"}:
+            if fact.get("unit") not in field.get("allowed_units", []):
+                errors.append(
+                    f"{location}: unit '{fact.get('unit')}' is not allowed for Field '{field_id}'"
+                )
+        elif fact.get("unit") is not None:
+            errors.append(f"{location}: non-numeric Field '{field_id}' requires a null unit")
+        classification = fact.get("value_classification")
+        if classification not in field.get("permitted_value_classifications", []):
+            errors.append(
+                f"{location}: classification '{classification}' is not permitted for Field '{field_id}'"
+            )
+        if classification == "estimated" and not field.get("estimated_values_allowed"):
+            errors.append(f"{location}: estimated values are prohibited for Field '{field_id}'")
+        if classification == "derived" and not field.get("derived_values_allowed"):
+            errors.append(f"{location}: derived values are prohibited for Field '{field_id}'")
+        verification = fact.get("verification_status")
+        if verification not in field.get("permitted_verification_states", []):
+            errors.append(
+                f"{location}: verification state '{verification}' is not permitted for Field '{field_id}'"
+            )
+        if field.get("deprecated") and fact.get("lifecycle_status") == "active":
+            errors.append(f"{location}: deprecated Field '{field_id}' cannot govern an active Fact")
+        if fact.get("lifecycle_status") == "active":
+            key = (fact.get("entity_type"), fact.get("entity_id"), field_id)
+            active_facts[key].append(fact_id)
+
+    for key, fact_ids in sorted(active_facts.items()):
+        field = field_index[key[2]][0]
+        if not field.get("multiple_active_facts_allowed") and len(fact_ids) > 1:
+            errors.append(
+                f"Multiple active Facts prohibited for {key[0]}:{key[1]} Field '{key[2]}': "
+                f"{', '.join(sorted(fact_ids))}"
+            )
 
     source_supersession: dict[str, set[str]] = defaultdict(set)
     for source_id, (source, path, line_number) in source_index.items():
@@ -320,7 +406,7 @@ def main() -> int:
         return 1
     print(
         f"Validated {len(ENTITY_SCHEMAS) + 1} schemas, canonical records, "
-        "provenance, uniqueness, and relationships."
+        "semantic governance, provenance, uniqueness, and relationships."
     )
     return 0
 
