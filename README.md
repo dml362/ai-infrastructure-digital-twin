@@ -1,10 +1,10 @@
 # AI Infrastructure Digital Twin
 
-Version 0.1.0 establishes the data architecture for a long-lived, multi-company digital representation of AI infrastructure. The repository is an engineering database: it captures physical assets, commercial agreements, financing, construction, sources, and assumptions in auditable structured records. Valuation models and company data are intentionally outside this release.
+Version 0.2.0 adds the permanent evidence layer for a long-lived, multi-company digital representation of AI infrastructure. The repository is an engineering database: immutable external evidence is registered, atomic Facts cite that evidence, and derived information identifies its input Facts. Valuation models and company data remain outside this release.
 
 ## Design principles
 
-- **Traceable:** every record cites one or more source-document IDs.
+- **Traceable:** every asserted Fact cites one or more Source Registry IDs.
 - **Normalized:** entities are stored once and connected with stable IDs.
 - **Reproducible:** derived values identify their inputs and calculation method.
 - **Time-aware:** facts retain effective dates and source publication dates.
@@ -16,7 +16,7 @@ Version 0.1.0 establishes the data architecture for a long-lived, multi-company 
 | Path | Purpose |
 | --- | --- |
 | `docs/` | Architecture decisions, conventions, and operating guidance |
-| `data/` | Validated canonical records; empty in v0.1.0 |
+| `data/` | Validated canonical records; intentionally empty in v0.2.0 |
 | `schemas/` | JSON Schema contracts and reusable definitions |
 | `sources/` | Source registry and future immutable source manifests |
 | `models/` | Future reproducible transformations; not valuation models |
@@ -25,13 +25,17 @@ Version 0.1.0 establishes the data architecture for a long-lived, multi-company 
 | `outputs/` | Generated, disposable artifacts; canonical data never lives here |
 | `archive/` | Superseded material retained for audit history |
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for entity relationships and storage conventions and [docs/SOURCE_REFERENCE.md](docs/SOURCE_REFERENCE.md) for provenance rules.
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for entity relationships, [docs/EVIDENCE_ARCHITECTURE.md](docs/EVIDENCE_ARCHITECTURE.md) for the evidence-to-conclusion layers, [docs/FACT_LIFECYCLE.md](docs/FACT_LIFECYCLE.md) for controlled transitions, and [docs/SOURCE_REFERENCE.md](docs/SOURCE_REFERENCE.md) for provenance rules.
 
 ## Data philosophy
 
-Canonical facts belong in typed entity records, not prose or spreadsheets. Relationships use IDs rather than embedded copies. Each record has creation and modification timestamps, lifecycle status, confidence, notes, and source references. A source establishes provenance, while confidence expresses evidentiary strength; neither substitutes for the other.
+Canonical Facts are atomic objects outside typed entity records; entity tables do not embed asserted values. Entity records contain only UUID identity, a machine key, a non-authoritative display label, structural graph edges, and repository-administration metadata. Legal names, locations, capacity, power, dates, operating state, customer relationships, lease terms, financial values, ownership, and all other sourced attributes exist exclusively as Facts.
 
-Raw source documents should not be modified after registration. Corrections create a new record version or supersede a record with an explicit audit trail. Derived values must reference underlying record IDs and document their formula or transformation in code.
+Every Fact separates `value_classification` (observed, estimated, derived), `verification_status` (pending review, verified, disputed), and `lifecycle_status` (active, superseded, deprecated). Its `value_type` selects one exact representation for the value. A Source establishes provenance, while confidence expresses evidentiary strength; neither substitutes for the other.
+
+Raw source documents must not be modified after registration and binary evidence must not be committed to GitHub. Corrections create new Source and Fact records with reciprocal supersession links. Derived values reference input Fact IDs and document their reproducible formula or transformation.
+
+`display_name` is only a navigation label. It must never be treated as a legal name or copied into analysis as an authoritative value. See [docs/SCHEMA_EXAMPLES.md](docs/SCHEMA_EXAMPLES.md) for synthetic structural and Fact examples.
 
 ## Versioning philosophy
 
