@@ -452,6 +452,27 @@ class EvidenceArchitectureTests(unittest.TestCase):
             fixture.write_jsonl("canonical/field/part-001.jsonl", broken)
             self.assertTrue(any("broken replacement Field reference 'FIELD-999999'" in e for e in validate_repository(fixture.root)))
 
+    def test_circular_field_replacements_fail_repository_validation(self):
+        first = field_record(
+            "FIELD-000101",
+            canonical_name="company.cycle_first",
+            deprecated=True,
+            replacement_field_id="FIELD-000102",
+        )
+        second = field_record(
+            "FIELD-000102",
+            canonical_name="company.cycle_second",
+            deprecated=True,
+            replacement_field_id="FIELD-000101",
+        )
+        with RepositoryFixture() as fixture:
+            fixture.write_jsonl("canonical/field/part-001.jsonl", first, second)
+            errors = validate_repository(fixture.root)
+            self.assertIn(
+                "Circular Field replacement: FIELD-000101 -> FIELD-000102 -> FIELD-000101",
+                errors,
+            )
+
     def test_field_rename_preserves_historical_fact_reference(self):
         fact = fact_record()
         for canonical_name in ["company.legal_name", "company.registered_legal_name"]:
