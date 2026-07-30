@@ -3,8 +3,18 @@
 ## Evidence admission
 
 ```text
-External evidence -> Acquired evidence -> Observed assertion -> Candidate Fact
-                  -> Validation -> Review -> Acceptance -> Governed Fact
+Observation-backed: acquired evidence -> Acquisition Record -> Source -> Observed Assertion --------\
+Estimation-backed: supporting evidence or Facts -> estimation method + assumptions -----------------> Candidate Fact
+Derivation-backed: accepted input Facts -> reproducible derivation method ---------------------------/
+                                                                                                     -> Validation
+                                                                                                     -> Review
+                                                                                                     -> one terminal decision
+                                                                                                          | accepted
+                                                                                                          v
+                                                                                                     Repository Acceptance
+                                                                                                     -> Governed Fact
+
+Rejected terminal decision -------------------------------------------------------------------------> retained admission history
 ```
 
 The [Evidence Acquisition and Knowledge Acceptance Architecture](architecture/KNOWLEDGE_ADMISSION_ARCHITECTURE.md) governs this boundary. Registration assigns a permanent Source ID, but neither registration, extraction, estimation, derivation, nor validation alone creates repository knowledge. Observation-backed, estimation-backed, and derivation-backed proposals all become Candidate Facts and use the same validation, review, and explicit acceptance boundary. Acceptance does not automatically set `verification_status` to `verified`. Rejected and revised candidates remain admission history rather than canonical Facts, and each immutable candidate version has exactly one terminal acceptance or rejection decision.

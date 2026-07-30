@@ -112,14 +112,18 @@ If accepted knowledge later proves wrong, its replacement begins as a new observ
 The provenance chain is continuous and directional:
 
 ```text
-External origin
-  -> Acquisition Record
-  -> Source / acquired evidence identity
-  -> Observed Assertion and extraction context
-  -> Candidate Fact and semantic mapping
-  -> validation outcomes and reviewer history
-  -> Acceptance Decision
-  -> governed Fact
+Observation-backed: acquired evidence -> Acquisition Record -> Source -> Observed Assertion --------\
+Estimation-backed: supporting evidence or Facts -> estimation method + assumptions -----------------> Candidate Fact
+Derivation-backed: accepted input Facts -> reproducible derivation method ---------------------------/
+                                                                                                     -> validation outcomes
+                                                                                                     -> review history
+                                                                                                     -> one terminal decision
+                                                                                                          | accepted
+                                                                                                          v
+                                                                                                     Repository Acceptance
+                                                                                                     -> governed Fact
+
+Rejected terminal decision -------------------------------------------------------------------------> retained admission history
 ```
 
 Every transition adds context; none discards prior context. The chain preserves the original source location, acquisition timestamp and method, evidence identity or cryptographic integrity information where available, the exact extraction context, observer or process attribution, mappings considered, validation outcomes, reviewer actions, decision rationale, and the accepted Fact identity.
