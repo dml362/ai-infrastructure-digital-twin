@@ -1,13 +1,13 @@
 # Source and Fact Lifecycle
 
-## Evidence ingestion
+## Evidence admission
 
 ```text
-Source arrives -> Registered -> Reviewed -> Facts extracted -> Validated
-               -> Fact created -> Linked to entity -> Available downstream
+External evidence -> Acquired evidence -> Observed assertion -> Candidate Fact
+                  -> Validation -> Review -> Acceptance -> Governed Fact
 ```
 
-Registration assigns a permanent Source ID. Fact creation also selects a governed Field ID; semantic validation must pass before the Fact is available downstream.
+The [Evidence Acquisition and Knowledge Acceptance Architecture](architecture/KNOWLEDGE_ADMISSION_ARCHITECTURE.md) governs this boundary. Registration assigns a permanent Source ID, but neither registration, extraction, nor validation alone creates repository knowledge. A governed Fact is created only after an explicit acceptance decision for a candidate that resolves its Source, Entity, and Field and passes every applicable validation layer. Rejected and revised candidates remain admission history rather than canonical Facts.
 
 ## Fact state transitions
 

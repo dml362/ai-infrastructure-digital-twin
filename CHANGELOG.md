@@ -4,6 +4,18 @@ All notable changes are documented here. This project follows [Semantic Versioni
 
 ## [Unreleased]
 
+## [0.4.0] - Unreleased
+
+### Added
+
+- Evidence Acquisition and Knowledge Acceptance Architecture defining the constitutional repository boundary from external evidence through governed Facts.
+- Conceptual Acquisition Record, Observed Assertion, Candidate Fact, and Acceptance Decision governance objects.
+- Explicit admission lifecycle, independent validation layers, review and rejection governance, provenance continuity, and source-agnostic failure treatment.
+
+### Changed
+
+- README now identifies repository admission as a distinct architectural layer governed by the Architecture Constitution.
+
 ## [0.3.0] - Unreleased
 
 ### Added
@@ -47,7 +59,9 @@ All notable changes are documented here. This project follows [Semantic Versioni
 - Data dictionary, assumptions policy, source-reference convention, and architecture documentation.
 - Repository and fixture validation scripts with automated tests.
 
-[Unreleased]: https://github.com/dml362/ai-infrastructure-digital-twin/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/dml362/ai-infrastructure-digital-twin/compare/v0.3.1...HEAD
+[0.4.0]: https://github.com/dml362/ai-infrastructure-digital-twin/compare/v0.3.1...v0.4.0
+[0.3.1]: https://github.com/dml362/ai-infrastructure-digital-twin/releases/tag/v0.3.1
 [0.3.0]: https://github.com/dml362/ai-infrastructure-digital-twin/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/dml362/ai-infrastructure-digital-twin/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/dml362/ai-infrastructure-digital-twin/releases/tag/v0.1.0

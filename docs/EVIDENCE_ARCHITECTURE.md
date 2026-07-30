@@ -34,9 +34,12 @@ Numeric values always declare a unit permitted by their Field. Use `unitless` on
 ## Traceability and storage boundaries
 
 ```text
-External evidence bytes -> Source Registry -> Atomic Fact <- Field Registry
-                                            -> Derived Fact -> Analysis -> Conclusion
+External evidence bytes -> Source Registry -> Observed Assertion -> Candidate Fact
+                                              -> Acceptance Decision -> Atomic Fact <- Field Registry
+                                                                     -> Derived Fact -> Analysis -> Conclusion
 ```
+
+The intermediate admission records preserve the difference between observed and accepted knowledge. Their conceptual contracts are defined in the [Evidence Acquisition and Knowledge Acceptance Architecture](architecture/KNOWLEDGE_ADMISSION_ARCHITECTURE.md). They do not weaken or replace the Source, Field, Entity, or Fact contracts, and Version 0.4.0 does not implement an ingestion system.
 
 `source_url` is the original evidence location. `storage_location` and `external_file_id` identify an immutable object held by an external `storage_provider`. The repository JSONL record is only metadata describing those locations and integrity checks. When `storage_provider` is `none`, every archive-specific field is null. When a provider is declared, object identity, filename, media type, size, digest, algorithm, archive time, and archive access status are mandatory and internally consistent.
 

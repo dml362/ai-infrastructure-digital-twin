@@ -1,6 +1,6 @@
 # AI Infrastructure Digital Twin
 
-Version 0.3.0 adds semantic governance to the permanent evidence layer. Immutable external evidence is registered, atomic Facts cite evidence and governed Fields, and derived information identifies its input Facts. A Fact is valid only when its structure, semantics, provenance, and lifecycle all validate. Valuation models and company data remain outside this release.
+Version 0.4.0 defines how external evidence may cross the repository boundary and become governed knowledge. Acquisition, observation, candidate interpretation, validation, review, acceptance, and rejection remain explicit and auditable; no ingestion implementation or repository population is included.
 
 ## Design principles
 
@@ -26,7 +26,7 @@ Version 0.3.0 adds semantic governance to the permanent evidence layer. Immutabl
 | `outputs/` | Generated, disposable artifacts; canonical data never lives here |
 | `archive/` | Superseded material retained for audit history |
 
-The [Architecture Constitution](docs/architecture/ARCHITECTURE_CONSTITUTION.md) is the repository's primary architectural reference. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for relationships, [docs/FIELD_REGISTRY.md](docs/FIELD_REGISTRY.md) for semantic governance, [docs/EVIDENCE_ARCHITECTURE.md](docs/EVIDENCE_ARCHITECTURE.md) for evidence layers, [docs/FACT_LIFECYCLE.md](docs/FACT_LIFECYCLE.md) for transitions, and [docs/SOURCE_REFERENCE.md](docs/SOURCE_REFERENCE.md) for provenance.
+The [Architecture Constitution](docs/architecture/ARCHITECTURE_CONSTITUTION.md) is the repository's primary architectural reference. The [Evidence Acquisition and Knowledge Acceptance Architecture](docs/architecture/KNOWLEDGE_ADMISSION_ARCHITECTURE.md) governs repository admission. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for relationships, [docs/FIELD_REGISTRY.md](docs/FIELD_REGISTRY.md) for semantic governance, [docs/EVIDENCE_ARCHITECTURE.md](docs/EVIDENCE_ARCHITECTURE.md) for evidence layers, [docs/FACT_LIFECYCLE.md](docs/FACT_LIFECYCLE.md) for transitions, and [docs/SOURCE_REFERENCE.md](docs/SOURCE_REFERENCE.md) for provenance.
 
 ## Data philosophy
 
