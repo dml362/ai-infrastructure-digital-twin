@@ -4,8 +4,6 @@ All notable changes are documented here. This project follows [Semantic Versioni
 
 ## [Unreleased]
 
-## [0.4.0] - Unreleased
-
 ### Added
 
 - Evidence Acquisition and Knowledge Acceptance Architecture defining the constitutional repository boundary from external evidence through governed Facts.
@@ -16,7 +14,17 @@ All notable changes are documented here. This project follows [Semantic Versioni
 
 - README now identifies repository admission as a distinct architectural layer governed by the Architecture Constitution.
 
-## [0.3.0] - Unreleased
+## [0.3.1] - 2026-07-30
+
+### Added
+
+- Architecture Constitution defining the repository's enduring layers, foundational principles, Fact and Field constitutions, validation philosophy, evolution rules, and release governance.
+
+### Changed
+
+- README now identifies the Architecture Constitution as the primary architectural authority.
+
+## [0.3.0] - 2026-07-29
 
 ### Added
 
@@ -31,7 +39,7 @@ All notable changes are documented here. This project follows [Semantic Versioni
 - Validation now distinguishes structural, semantic, provenance, and lifecycle validity.
 - Expanded tests for Field identity, naming, references, semantic constraints, cardinality, deprecation, replacement integrity, and rename stability.
 
-## [0.2.0] - Unreleased
+## [0.2.0] - 2026-07-29
 
 ### Added
 
@@ -60,8 +68,7 @@ All notable changes are documented here. This project follows [Semantic Versioni
 - Repository and fixture validation scripts with automated tests.
 
 [Unreleased]: https://github.com/dml362/ai-infrastructure-digital-twin/compare/v0.3.1...HEAD
-[0.4.0]: https://github.com/dml362/ai-infrastructure-digital-twin/compare/v0.3.1...v0.4.0
-[0.3.1]: https://github.com/dml362/ai-infrastructure-digital-twin/releases/tag/v0.3.1
+[0.3.1]: https://github.com/dml362/ai-infrastructure-digital-twin/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/dml362/ai-infrastructure-digital-twin/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/dml362/ai-infrastructure-digital-twin/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/dml362/ai-infrastructure-digital-twin/releases/tag/v0.1.0

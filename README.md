@@ -17,7 +17,7 @@ Version 0.4.0 defines how external evidence may cross the repository boundary an
 | Path | Purpose |
 | --- | --- |
 | `docs/` | Architecture decisions, conventions, and operating guidance |
-| `data/` | Validated canonical records; v0.3.0 contains only the synthetic Field Registry |
+| `data/` | Validated canonical records; v0.4.0 contains only the synthetic Field Registry |
 | `schemas/` | JSON Schema contracts and reusable definitions |
 | `sources/` | Source registry and future immutable source manifests |
 | `models/` | Future reproducible transformations; not valuation models |

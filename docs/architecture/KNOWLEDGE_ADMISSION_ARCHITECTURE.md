@@ -35,7 +35,7 @@ Constitutional guarantees are mandatory for every record created under repositor
 | External Evidence | Preserve the distinction between the world and the repository | Artifact, communication, or manual observation outside repository control | Identified acquisition target | External custodian | A deliberate acquisition attempt is authorized |
 | Acquired Evidence | Record what entered repository control without interpreting it as truth | External evidence and acquisition context | Acquisition Record and registered or proposed Source evidence | Evidence stewardship | Identity, origin, timestamp, method, integrity context, and access state are recorded |
 | Observed Assertions | Preserve what an observer or extraction process found in the evidence | Acquired evidence and bounded extraction context | One or more Observed Assertions | Evidence interpretation | Each assertion points to exact evidence and extraction context; no semantic acceptance is implied |
-| Candidate Facts | Express an assertion in the repository's proposed semantic form | Observed Assertion, proposed Entity, Field, typed value, unit, and provenance | Candidate Fact | Semantic stewardship | Mapping is explicit and the proposal is complete enough to validate |
+| Candidate Facts | Express an observed, estimated, or derived assertion in the repository's proposed semantic form | Observed Assertion or documented estimation or derivation basis; proposed Entity, Field, typed value, unit, and provenance | Candidate Fact | Semantic stewardship | Production method and its required metadata are explicit, and the proposal is complete enough to validate |
 | Validation | Evaluate independent admission dimensions deterministically | Candidate Fact and the repository state against which it is proposed | Validation outcome for every layer | Repository validation authority | Every required layer records pass or failure; no layer is inferred from another |
 | Review | Apply accountable human governance after deterministic checks | Candidate, evidence, mappings, validation outcomes, and prior decisions | Review record and recommendation | Authorized reviewer | Reviewer identity, time, rationale, and considered evidence are retained |
 | Acceptance or Rejection | Make an explicit admission decision | Complete review package | Immutable Acceptance Decision | Repository steward | Acceptance requires all gates to pass; rejection records reason codes and rationale |
@@ -43,6 +43,26 @@ Constitutional guarantees are mandatory for every record created under repositor
 | Historical Repository | Preserve the complete chronology | Acquisition, interpretation, validation, review, decision, and Fact records | Auditable repository history | Repository governance | Changes occur through new records and explicit relationships, never silent overwrite |
 
 Transitions are monotonic historical events. A later stage may refer back to an earlier stage, but it cannot rewrite what that earlier stage recorded.
+
+### Production-neutral admission paths
+
+The admission boundary governs all three Fact production methods. They differ only in the production context that must be preserved before they converge as Candidate Facts:
+
+```text
+Acquired evidence -> Observed Assertion -----------------------> Candidate Fact
+Acquired evidence + documented method and assumptions --------> Candidate Fact
+Accepted input Facts + reproducible derivation method ---------> Candidate Fact
+                                                               -> Validation
+                                                               -> Review
+                                                               -> Acceptance Decision
+                                                               -> Governed Fact
+```
+
+- An **observation-backed proposal** preserves the acquired evidence, exact observation context, and observation time.
+- An **estimation-backed proposal** preserves supporting evidence, the estimation method, and all assumptions. It need not pretend that an estimate was directly observed.
+- A **derivation-backed proposal** preserves its accepted input Fact IDs and reproducible derivation method, together with the provenance already retained by those inputs and any additional supporting Source references.
+
+Every path uses the same structural, semantic, provenance, lifecycle, constitutional, review, and acceptance gates. Estimated and derived production metadata is part of the candidate and remains immutable in the accepted Fact. No calculation, inference, successful extraction, or pre-existing input Fact may bypass repository acceptance.
 
 ## 4. Candidate knowledge model
 
@@ -58,11 +78,11 @@ An Observed Assertion records what was found and where it was found before the r
 
 ### Candidate Fact
 
-A Candidate Fact is a proposed mapping from an Observed Assertion to an existing Entity and Field, with a proposed typed value, unit, classification, dates, Source provenance, and production metadata. Candidate identity is permanent within admission history, but candidate status is not canonical truth. Corrections create a new candidate version linked to the prior proposal; they do not mutate the original attempt.
+A Candidate Fact is a proposed mapping of an observation, documented estimate, or reproducible derivation to an existing Entity and Field, with a proposed typed value, unit, classification, dates, Source provenance, and production metadata appropriate to its production method. Candidate identity is permanent within admission history, but candidate status is not canonical truth. Corrections create a new candidate version linked to the prior proposal; they do not mutate the original attempt.
 
 ### Acceptance Decision
 
-An Acceptance Decision is an immutable record that accepts or rejects one specific candidate version against one identifiable repository state. It preserves validation outcomes, reviewer history, decision time, rationale, and any accepted Fact ID. Acceptance and rejection are terminal for that candidate version. Reconsideration produces a new candidate or decision linked to the earlier history.
+An Acceptance Decision is an immutable record that accepts or rejects one specific immutable candidate version against one identifiable repository state. It preserves validation outcomes, reviewer history, decision time, rationale, and any accepted Fact ID. Each candidate version has exactly one terminal Acceptance Decision; acceptance and rejection cannot compete for the same version. Reconsideration creates a new candidate version linked to both the prior candidate and its terminal decision, then subjects that new version to a new validation, review, and decision path.
 
 These admission objects are first-class governance records but not canonical domain knowledge. Only the accepted Fact is available to downstream repository consumers. Future releases must define their identifiers, schemas, controlled vocabularies, and canonical storage before implementing ingestion.
 
@@ -81,7 +101,11 @@ Repository acceptance requires all of the following:
 
 Parsing or extraction success establishes only that a process produced output. Structural validity establishes only that the output has an allowed shape. Neither is evidence of semantic correctness, adequate provenance, or approval.
 
-Review may accept or reject a candidate, request a revised proposal, or identify insufficient evidence. Revision creates a new candidate linked to its predecessor. Rejection is permanent for the reviewed candidate version and remains auditable. Reconsideration never changes the old decision; it creates a new review path that cites the prior candidate and decision. If accepted knowledge later proves wrong, normal Fact dispute, deprecation, or supersession preserves both the Fact and its admission history.
+Review may accept or reject a candidate, request a revised proposal, or identify insufficient evidence. Revision creates a new candidate linked to its predecessor. Rejection is permanent for the reviewed candidate version and remains auditable. Reconsideration never changes the old decision and never creates a second decision for the old candidate; it creates a new candidate version that cites the prior candidate and terminal decision before beginning a new review path.
+
+Admission acceptance and Fact verification answer different questions. Acceptance authorizes a candidate to enter the canonical repository; `verification_status` records the repository's review judgment about the resulting assertion. Acceptance does not automatically set `verification_status` to `verified`. The accepted Fact retains the candidate's independently valid verification state, which may be `pending_review`, `verified`, or `disputed` when permitted by its Field and the existing Fact contract.
+
+If accepted knowledge later proves wrong, its replacement begins as a new observation-backed, estimation-backed, or derivation-backed candidate and completes the entire admission lifecycle. Only after that replacement candidate has passed validation and review and received its unique acceptance decision may the repository apply the accepted replacement Fact, reciprocal supersession references, and the prior Fact's lifecycle change as one coherent repository change. The old Fact, its immutable provenance and production metadata, the replacement candidate, all decisions, and every prior candidate version remain preserved.
 
 ## 6. Provenance continuity
 
@@ -114,7 +138,7 @@ Validation layers remain independent so failures are precise and explainable:
 | Provenance validation | Establishes that Source and evidence references resolve and that the chain from assertion to acquired evidence is complete |
 | Lifecycle validation | Establishes that revisions, supersession, derivation, estimation, and historical links are coherent and acyclic |
 | Constitutional validation | Establishes that the admission path preserves immutable identity, append-only history, evidence before interpretation, reproducibility, and repository-first authority |
-| Acceptance validation | Establishes that all applicable outcomes and accountable review approval exist for the exact candidate and repository state being admitted |
+| Acceptance validation | Establishes that all applicable outcomes and accountable review approval exist for the exact candidate and repository state being admitted, and that the candidate version has exactly one terminal decision |
 
 A candidate may pass one layer and fail another. Every outcome is retained independently. Deterministic layers operate only on explicit inputs and an identifiable repository state; they do not depend on network availability, hidden state, processing order, or undocumented judgment. Human review is explicit governance data, not concealed validator behavior.
 

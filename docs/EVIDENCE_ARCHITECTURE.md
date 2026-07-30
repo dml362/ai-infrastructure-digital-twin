@@ -34,12 +34,15 @@ Numeric values always declare a unit permitted by their Field. Use `unitless` on
 ## Traceability and storage boundaries
 
 ```text
-External evidence bytes -> Source Registry -> Observed Assertion -> Candidate Fact
-                                              -> Acceptance Decision -> Atomic Fact <- Field Registry
-                                                                     -> Derived Fact -> Analysis -> Conclusion
+External evidence -> Acquisition Record -> Source Registry -> Observed Assertion ----\
+Supporting evidence -> Acquisition Record -> estimation method and assumptions ------> Candidate Fact
+Accepted input Facts + Source provenance -> reproducible derivation method -----------/
+                                                                                     -> Acceptance Decision
+                                                                                     -> Atomic Fact <- Field Registry
+                                                                                     -> Analysis -> Conclusion
 ```
 
-The intermediate admission records preserve the difference between observed and accepted knowledge. Their conceptual contracts are defined in the [Evidence Acquisition and Knowledge Acceptance Architecture](architecture/KNOWLEDGE_ADMISSION_ARCHITECTURE.md). They do not weaken or replace the Source, Field, Entity, or Fact contracts, and Version 0.4.0 does not implement an ingestion system.
+The intermediate admission records preserve the difference between observed and accepted knowledge. Observation-backed, estimation-backed, and derivation-backed proposals all become Candidate Facts and pass through the same validation, review, and explicit acceptance boundary. Admission acceptance does not itself set a Fact's `verification_status` to `verified`. Their conceptual contracts are defined in the [Evidence Acquisition and Knowledge Acceptance Architecture](architecture/KNOWLEDGE_ADMISSION_ARCHITECTURE.md). They do not weaken or replace the Source, Field, Entity, or Fact contracts, and Version 0.4.0 does not implement an ingestion system.
 
 `source_url` is the original evidence location. `storage_location` and `external_file_id` identify an immutable object held by an external `storage_provider`. The repository JSONL record is only metadata describing those locations and integrity checks. When `storage_provider` is `none`, every archive-specific field is null. When a provider is declared, object identity, filename, media type, size, digest, algorithm, archive time, and archive access status are mandatory and internally consistent.
 
@@ -49,4 +52,4 @@ Google Drive is allowed but not required. Version 0.2.0 contains no authenticati
 
 After creation, a Fact's ID, schema version, creation timestamp, sources, subject, field, value type, asserted value, unit, observation/effective dates, classification, derivation inputs/method, and estimation method/assumptions are immutable. Permitted administrative updates are `verification_status`, `lifecycle_status`, `confidence_score`, review `notes`, reciprocal supersession references, and `modified_at`.
 
-Changing an assertion creates a new Fact and reciprocal supersession links. The validator exposes a revision-integrity check for ingestion workflows, but the canonical repository validator cannot compare a record with an earlier Git revision automatically; enforcement across Git history remains a documented policy limitation.
+Changing an assertion first creates a new candidate that completes the same production-neutral admission lifecycle as every other proposal. Only after acceptance may the repository create the replacement Fact and apply reciprocal supersession links and the prior Fact's lifecycle change as one coherent change. The validator exposes a revision-integrity check for future ingestion workflows, but the canonical repository validator cannot compare a record with an earlier Git revision automatically; enforcement across Git history remains a documented policy limitation.
