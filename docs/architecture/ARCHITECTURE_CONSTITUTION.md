@@ -26,9 +26,9 @@ Evidence Architecture establishes why an assertion may be trusted. It distinguis
 
 Semantic Governance establishes what an assertion means. It separates permanent semantic identity from governed names and presentation labels, and constrains applicability, values, units, cardinality, and lifecycle interpretation. Its responsibility is to keep meaning stable even when language and metadata evolve.
 
-### Future Knowledge Ingestion
+### Knowledge Admission and Future Ingestion
 
-Knowledge Ingestion will establish how external information may cross the repository boundary. Its responsibility will be to govern discovery, interpretation, validation, acceptance, rejection, and ingestion audit history without weakening repository, evidence, or semantic guarantees.
+Knowledge Admission establishes how external information may cross the repository boundary through acquisition, interpretation, candidate formation, validation, review, acceptance, rejection, and preserved admission history without weakening repository, evidence, or semantic guarantees. The architecture is defined by Version 0.4.0; machine-readable admission contracts and ingestion implementation remain future work. Future ingestion systems must conform to this boundary rather than create canonical Facts directly.
 
 These layers remain independent because structure, evidence, meaning, and admission are distinct dimensions of trustworthy knowledge. A record may be structurally well formed while lacking valid provenance, or semantically valid while failing lifecycle requirements. Combining these concerns would hide the reason for failure and make future evolution unsafe. New layers must compose with the existing architecture and may not bypass or redefine its guarantees.
 
@@ -146,7 +146,7 @@ Backward interpretability is broader than technical compatibility. A future main
 
 ## 8. Non-goals
 
-The repository does not seek to become every system that may use or produce governed knowledge. Ingestion, extract-transform-load processing, analytics, dashboards, AI inference, external storage, operational databases, connectors, search services, and runtime applications are intentionally outside the repository's foundational responsibility.
+The repository does not seek to become every system that may use or produce governed knowledge. Ingestion implementation, extract-transform-load processing, analytics, dashboards, AI inference, external storage, operational databases, connectors, search services, and runtime applications are intentionally outside the repository's foundational responsibility. The governed admission boundary is part of repository architecture; the runtime systems that submit proposals through it are not.
 
 These capabilities belong above the repository because they operate at different rates, depend on different technologies, and serve different users. They may discover, transform, query, or present knowledge, but they must consume or propose changes through governed repository contracts. Keeping them separate prevents transient operational concerns from weakening durable evidence, semantic, and historical guarantees.
 
@@ -164,7 +164,7 @@ Foundational stability is prioritized over feature velocity because every downst
 
 ## 10. Future architecture
 
-Anticipated future layers and capabilities include Knowledge Ingestion, Relationship Architecture, External Evidence Sources, Storage Backends, Digital Twin Population, Analytics, Graph Construction, Temporal Reasoning, Search, and Visualization.
+Anticipated future layers and capabilities include Knowledge Ingestion implementation, Relationship Architecture, External Evidence Sources, Storage Backends, Digital Twin Population, Analytics, Graph Construction, Temporal Reasoning, Search, and Visualization.
 
 This list is directional, not a design commitment. Each area requires its own bounded architecture, review, and acceptance criteria. No future layer may bypass immutable identity, append-only history, evidence provenance, semantic governance, deterministic validation, or repository-first stewardship.
 
