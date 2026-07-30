@@ -26,7 +26,7 @@ Version 0.3.0 adds semantic governance to the permanent evidence layer. Immutabl
 | `outputs/` | Generated, disposable artifacts; canonical data never lives here |
 | `archive/` | Superseded material retained for audit history |
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for relationships, [docs/FIELD_REGISTRY.md](docs/FIELD_REGISTRY.md) for semantic governance, [docs/EVIDENCE_ARCHITECTURE.md](docs/EVIDENCE_ARCHITECTURE.md) for evidence layers, [docs/FACT_LIFECYCLE.md](docs/FACT_LIFECYCLE.md) for transitions, and [docs/SOURCE_REFERENCE.md](docs/SOURCE_REFERENCE.md) for provenance.
+The [Architecture Constitution](docs/architecture/ARCHITECTURE_CONSTITUTION.md) is the repository's primary architectural reference. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for relationships, [docs/FIELD_REGISTRY.md](docs/FIELD_REGISTRY.md) for semantic governance, [docs/EVIDENCE_ARCHITECTURE.md](docs/EVIDENCE_ARCHITECTURE.md) for evidence layers, [docs/FACT_LIFECYCLE.md](docs/FACT_LIFECYCLE.md) for transitions, and [docs/SOURCE_REFERENCE.md](docs/SOURCE_REFERENCE.md) for provenance.
 
 ## Data philosophy
 
